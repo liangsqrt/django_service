@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,8 +29,6 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 
-# Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,7 +36,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',
+    'crispy_forms',
+    'userapi',
+    'xadmin',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +79,11 @@ WSGI_APPLICATION = 'company_website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'zhiyuan',
+        'USER': 'root',
+        'PASSWORD': 'asd123456',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
@@ -119,3 +125,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES":
+        (
+            "rest_framework_jwt.authentication.JSONWebTokenAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
+            "rest_framework.authentication.SessionAuthentication",
+        )
+}
+
+# Application definition
+
+AUTHENTICATION_BACKENDS = (
+    "userapi.views.UserAuthentication",  # 我的用户认证逻辑
+)
+
+AUTH_USER_MODEL = 'userapi.User'
+
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=300),
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+}

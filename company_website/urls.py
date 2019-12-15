@@ -14,12 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-from django.urls import path, include
+from django.urls import path, include, re_path
+from rest_framework.routers import DefaultRouter
+import xadmin
+from userapi.views import *
+from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh_jwt_token
+
+
+router = DefaultRouter()
+
+router.register('user', UserSerializersView)
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('login/', include('userapi.urls', "userapi"), namespace='login')
+    path('xadmin/', xadmin.site.urls),
+    re_path('^', include(router.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path("jwt_auth/", obtain_jwt_token),
+    path('jwt_verify/', verify_jwt_token),
+    path('jwt_/refresh', refresh_jwt_token),
+
 
 ]
