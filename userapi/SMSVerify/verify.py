@@ -44,15 +44,3 @@ if __name__ == '__main__':
     sendmsg = QCloudSMS(app_id, app_key)
     sendmsg.send_msg("18190800121")
 
-
-
-# if __name__ == "__main__":
-#
-#     secretid = "AKID7B28z3CVxDF2NSvT8fx1pLcswlW3HRAf"
-#     secretkey = "f5GDuOL6hKiqjMmzxm7KH1XptkNwHMDp"
-#     app_key = "97e597cf421647506e3d03bc96024a5f"
-#     sms_verify = SMSVerify(app_id="1400296997", template_id="499312", secretid=secretid,)  #  signature=secretkey
-#     sms_verify.send_sms(code="2019", phone_number="+8618190800121", way=2)
-
-
-
