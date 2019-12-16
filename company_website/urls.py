@@ -23,8 +23,9 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 router = DefaultRouter()
 
-router.register('user', UserSerializersView)
-
+router.register('user_all', UserSerializersView)
+router.register("user", UserVerifyViewSet)
+router.register("codes", SmsCodeViewset)
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
