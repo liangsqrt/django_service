@@ -48,7 +48,7 @@ class SmsSerializer(serializers.Serializer):
         return mobile
 
 
-class UserVerifySerializers(serializers.ModelSerializer):
+class UserSignInSerializers(serializers.ModelSerializer):
     """
     用户注册时要用到的字段，用于注册后返回时数据
     """
@@ -68,12 +68,12 @@ class UserVerifySerializers(serializers.ModelSerializer):
     )
 
     def validate_code(self, code):
-        verify_records = VerifyCode.objects.filter(mobile=self.initial_data["username"]).order_by("-add_time")
+        verify_records = VerifyCode.objects.filter(mobile_phone=self.initial_data["mobile_phone"]).order_by("-add_time")
 
         if verify_records:
             last_record = verify_records[0]
             three_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=3)
-            if last_record.add_time < three_minutes_ago:
+            if last_record.add_time.replace(tzinfo=None) < three_minutes_ago:
                 raise serializers.ValidationError("验证码过期！！")
             if last_record.code != code:
                 raise serializers.ValidationError("验证码错误！！")
@@ -86,14 +86,13 @@ class UserVerifySerializers(serializers.ModelSerializer):
         :param attrs:
         :return:
         """
-        attrs["mobile"] = attrs["username"]
+        # attrs["mobile"] = attrs["username"]
         del attrs["code"]  # 已经验证过了，没用了
         return attrs
 
     class Meta:
         model = User
         fields = ("username", "code", "mobile_phone", "password")  # serializer和user字段的合集
-
 
 
 class UserDetailSerializer(serializers.ModelSerializer):

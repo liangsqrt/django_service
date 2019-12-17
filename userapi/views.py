@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import UserSerializers, UserVerifySerializers, SmsSerializer, UserDetailSerializer
+from .serializers import UserSerializers, UserSignInSerializers, SmsSerializer, UserDetailSerializer
 from .models import User, VerifyCode
 from rest_framework import generics, viewsets
 from rest_framework import mixins
@@ -36,6 +36,9 @@ class UserSerializersView(mixins.ListModelMixin, viewsets.GenericViewSet):
 
 
 class UserAuthentication(ModelBackend):
+    """
+    验证用户用的，用于一般访问请求时，确定用户到底可不可以访问
+    """
     def authenticate(self, request, username=None, password=None, **kwargs):  # authenticate() 这个函数中处理认证的逻辑
         """
 
@@ -97,23 +100,22 @@ class SmsCodeViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
             }, status=status.HTTP_201_CREATED)
 
 
-class UserVerifyViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
+class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     用户
     """
-    serializer_class = UserVerifySerializers
+    serializer_class = UserSignInSerializers
     queryset = User.objects.all()
     authentication_classes = (JSONWebTokenAuthentication, authentication.SessionAuthentication)
 
     def get_serializer_class(self):
         if self.action == "retrieve":
-            return UserVerifySerializers
-        elif self.action == "create":
             return UserDetailSerializer
+        elif self.action == "create":
+            return UserSignInSerializers
 
         return UserDetailSerializer
 
-    # permission_classes = (permissions.IsAuthenticated, )
     def get_permissions(self):
         if self.action == "retrieve":
             return [permissions.IsAuthenticated()]

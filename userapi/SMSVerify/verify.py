@@ -33,7 +33,7 @@ class QCloudSMS(object):
 
 
 # if __name__ == '__main__':
-
-    # sendmsg = QCloudSMS(app_sdk_id, app_key)
-    # sendmsg.send_msg("18190800121")
+#
+#     sendmsg = QCloudSMS(app_sdk_id, app_key)
+#     sendmsg.send_msg("18190800121")
 
