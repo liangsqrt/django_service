@@ -18,21 +18,21 @@ from django.contrib.auth.models import AbstractUser, UserManager, AbstractBaseUs
 
 class User(AbstractUser):
     id = models.IntegerField(auto_created=True, default=0)
-    username = models.CharField(max_length=255, null=False,  verbose_name="用户",
-                                unique=True, help_text="登陆用的用户名")
+    username = models.CharField(max_length=255, null=True,  verbose_name="用户",
+                                help_text="登陆用的用户名", blank=True, db_index=True)
     password = models.CharField(max_length=255, null=False, help_text="密码")
     gender = models.CharField(max_length=6, choices=(("male", u"男"), ("female", "女")), default="female",
                               verbose_name="性别")
     alias = models.CharField(max_length=255, null=True, help_text="昵称")  # 昵称, 可以重复
 
     nation = models.CharField(null=True, blank=True, max_length=15, verbose_name="汉族", help_text="汉族")
-    mobile_phone = models.CharField(max_length=40, null=False)
-    email = models.EmailField(max_length=255, null=False, unique=True)
+    mobile_phone = models.CharField(max_length=40, null=True, blank=True, db_index=True)
+    email = models.EmailField(max_length=255, null=True, blank=True, db_index=True)
     head_picture = models.ImageField(max_length=200, upload_to="users/images/headpicture/%Y/%m", null=True,
                                      blank=True, )
 
-    rel_name = models.CharField(max_length=40, null=True)
-    total_score = models.FloatField(default=0, null=True)
+    rel_name = models.CharField(max_length=40, null=True, blank=True)
+    total_score = models.FloatField(default=0, null=True, blank=True)
 
     sign_in_datetime = models.DateTimeField(auto_now=True, null=True)
     sign_in_ip = models.GenericIPAddressField(max_length=255, null=True)
@@ -42,7 +42,7 @@ class User(AbstractUser):
     school = models.CharField(max_length=255, null=True)
     address = models.CharField(null=True, blank=True, max_length=50, verbose_name="家庭地址", help_text="家庭地址")
 
-    user_id = models.AutoField(primary_key=True, unique=True, null=False, blank=False)
+    user_id = models.AutoField(primary_key=True, unique=True, null=False, blank=False, auto_created=True)
 
     # groups = models.CharField()
     is_active = models.BooleanField('已激活', default=True, help_text="是否邮箱验证通过了")
@@ -56,7 +56,7 @@ class User(AbstractUser):
         db_table = "用户表"
         verbose_name = "用户表"
         verbose_name_plural = "用户表"
-        index_together = ["username", "email"]
+        index_together = ["username", "email", "mobile_phone"]
 
     def __str__(self):
         return "用户信息表"
