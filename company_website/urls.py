@@ -23,7 +23,7 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 router = DefaultRouter()
 
-router.register('user_all', UserSerializersView)
+router.register('user', UserSerializersView)
 router.register("sign_in", UserSignInViewSet)
 router.register("codes", SmsCodeViewset)
 

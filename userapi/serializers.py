@@ -90,6 +90,10 @@ class UserSignInSerializers(serializers.ModelSerializer):
         del attrs["code"]  # 已经验证过了，没用了
         return attrs
 
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
     class Meta:
         model = User
         fields = ("username", "code", "mobile_phone", "password")  # serializer和user字段的合集

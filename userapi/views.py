@@ -15,24 +15,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import permissions
 from rest_framework import authentication
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
-
-
-class UserSerilizersPagination(PageNumberPagination):
-    page_size = 10
-    page_size_query_param = 'ps'
-    page_query_param = 'p'
-    max_page_size = 30
-
-
-class UserSerializersView(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """
-    todo: 把所有的用户信息暴露出去，这个记得要删除的
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializers
-    pagination_class = UserSerilizersPagination
+from rest_framework import exceptions
 
 
 class UserAuthentication(ModelBackend):
@@ -48,13 +34,46 @@ class UserAuthentication(ModelBackend):
         :param kwargs:
         :return:
         """
+        if not username:
+            raise exceptions.AuthenticationFailed("用户名不能为空")
         try:
             user = User.objects.get(Q(username=username) | Q(mobile_phone=username) | Q(email=username))
             if user.check_password(password):  # check_password() 时会转化为密文的形式
                 return user
         except Exception as e:
             print(e)
-            return None
+            raise exceptions.AuthenticationFailed("用户认证失败")
+
+    def authenticate_header(self, request):
+        pass
+
+
+class MyPermisssion(BasePermission):
+    def has_permission(self, request, view):
+        print(request.data)
+        if request.user.username:
+            return True
+        else:
+            return False
+
+
+class UserSerilizersPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'ps'
+    page_query_param = 'p'
+    max_page_size = 30
+    authentication_classes = (UserAuthentication, )
+
+
+class UserSerializersView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """
+    获取用户的详细信息用的，记得加验证
+    """
+    lookup_field = "username"
+    queryset = User.objects.all()
+    serializer_class = UserSerializers
+    authentication_classes = (JSONWebTokenAuthentication, )
+    permission_classes = (IsAuthenticated, )
 
 
 class SmsCodeViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
