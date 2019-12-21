@@ -7,23 +7,19 @@ from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
 from django.contrib.auth.backends import ModelBackend
 from random import choice
-# from rest_framework.permissions import IsAuthenticated
-# from django.http.response import HttpResponse
-# from django.contrib.auth import get_user_model
 from .SMSVerify.verify import QCloudSMS
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework import authentication
-from rest_framework.permissions import IsAuthenticated, BasePermission
-from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.permissions import IsAuthenticated, BasePermission, IsAuthenticatedOrReadOnly
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication, BaseAuthentication
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
 from rest_framework import exceptions
 
 
 class UserAuthentication(ModelBackend):
     """
-    验证用户用的，用于一般访问请求时，确定用户到底可不可以访问
+    验证用户用的，用于一般访问请求时，确定用户到底可不可以访问.这里边的authenticate方法的调用发生在用户登陆的时候（非xadmin界面）
     """
     def authenticate(self, request, username=None, password=None, **kwargs):  # authenticate() 这个函数中处理认证的逻辑
         """
@@ -72,7 +68,7 @@ class UserSerializersView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     lookup_field = "username"
     queryset = User.objects.all()
     serializer_class = UserSerializers
-    authentication_classes = (JSONWebTokenAuthentication, )
+    # authentication_classes = (JSONWebTokenAuthentication, )
     permission_classes = (IsAuthenticated, )
 
 
@@ -125,7 +121,7 @@ class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     serializer_class = UserSignInSerializers
     queryset = User.objects.all()
-    authentication_classes = (JSONWebTokenAuthentication, authentication.SessionAuthentication)
+    authentication_classes = (JSONWebTokenAuthentication, )  # authentication.SessionAuthentication
 
     def get_serializer_class(self):
         if self.action == "retrieve":

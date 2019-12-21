@@ -82,7 +82,8 @@ DATABASES = {
         'NAME': 'zhiyuan',
         'USER': 'root',
         'PASSWORD': 'asd123456',
-        'HOST': '192.168.31.107',
+        # 'HOST': '192.168.31.107',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }

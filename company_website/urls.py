@@ -34,6 +34,4 @@ urlpatterns = [
     path("jwt_auth/", obtain_jwt_token),
     path('jwt_verify/', verify_jwt_token),
     path('jwt_/refresh', refresh_jwt_token),
-
-
 ]

@@ -19,7 +19,7 @@ from django.contrib.auth.models import AbstractUser, UserManager, AbstractBaseUs
 class User(AbstractUser):
     id = models.IntegerField(auto_created=True, default=0)
     username = models.CharField(max_length=255, null=True,  verbose_name="用户",
-                                help_text="登陆用的用户名", blank=True, db_index=True)
+                                help_text="登陆用的用户名", blank=True, db_index=True, unique=True)
     password = models.CharField(max_length=255, null=False, help_text="密码")
     gender = models.CharField(max_length=6, choices=(("male", u"男"), ("female", "女")), default="female",
                               verbose_name="性别")

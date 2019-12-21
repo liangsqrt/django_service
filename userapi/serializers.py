@@ -13,11 +13,14 @@ from rest_framework.validators import UniqueValidator
 
 
 class UserSerializers(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    is_activate = serializers.CharField(write_only=True)
+    is_deletes = serializers.CharField(write_only=True)
+    is_staff = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = '__all__'
-
+        fields = ("__all__")
 
 class SmsSerializer(serializers.Serializer):
     """
