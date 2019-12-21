@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .serializers import UserSerializers, UserSignInSerializers, SmsSerializer, UserDetailSerializer
-from .models import User, VerifyCode
+from .models import User, VerifyCode, UserSignInfoRecord, UserLoginRecord
 from rest_framework import generics, viewsets
 from rest_framework import mixins
 from rest_framework.pagination import PageNumberPagination
@@ -147,6 +147,9 @@ class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = self.perform_create(serializer)
+        user_sign_in = UserSignInfoRecord()
+        user_sign_in.sign_in_way = 1
+        user_sign_in.sign_in_ip = ""
 
         re_dict = serializer.data
         payload = jwt_payload_handler(user)
