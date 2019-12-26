@@ -29,7 +29,7 @@ class User(AbstractUser):
     mobile_phone = models.CharField(max_length=40, null=True, blank=True, db_index=True)
     email = models.EmailField(max_length=255, null=True, blank=True, db_index=True)
     head_picture = models.ImageField(max_length=200, upload_to="users/images/headpicture/%Y/%m", null=True,
-                                     blank=True, )
+                                     blank=True, default='')
 
     rel_name = models.CharField(max_length=40, null=True, blank=True)
     total_score = models.FloatField(default=0, null=True, blank=True)
@@ -63,6 +63,9 @@ class User(AbstractUser):
 
     def __unicode__(self):
         return "用户信息表"
+
+    def user_header_picture(self):
+        return self.head_picture.url
 
 
 class UserSignInfoRecord(models.Model):

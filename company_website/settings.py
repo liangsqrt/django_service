@@ -78,13 +78,13 @@ WSGI_APPLICATION = 'company_website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'zhiyuan',
-        'USER': 'root',
-        'PASSWORD': 'asd123456',
-        # 'HOST': '192.168.31.107',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'zhiyuan.db',
+        # 'USER': 'root',
+        # 'PASSWORD': 'asd123456',
+        # # 'HOST': '192.168.31.107',
+        # 'HOST': '127.0.0.1',
+        # 'PORT': '3306',
     }
 }
 
@@ -151,4 +151,5 @@ AUTH_USER_MODEL = 'userapi.User'
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=300),
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'userapi.views.jwt_response_payload_handler',
 }

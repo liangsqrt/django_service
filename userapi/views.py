@@ -44,6 +44,19 @@ class UserAuthentication(ModelBackend):
         pass
 
 
+def jwt_response_payload_handler(token, user=None, request=None):
+    return {
+        'token': token,
+        'code': 20000,
+        'data': {
+            'username': user.alias if user.alias else "awesome one",
+            'avatar': "/user/babalababa.jpg" # user.user_header_picture()
+        },
+
+    }
+
+
+
 class MyPermisssion(BasePermission):
     def has_permission(self, request, view):
         print(request.data)

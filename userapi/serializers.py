@@ -17,10 +17,13 @@ class UserSerializers(serializers.ModelSerializer):
     is_activate = serializers.CharField(write_only=True)
     is_deletes = serializers.CharField(write_only=True)
     is_staff = serializers.CharField(write_only=True)
+    code = serializers.IntegerField(default=400)
+    msg = serializers.StringRelatedField()
 
     class Meta:
         model = User
         fields = ("__all__")
+
 
 class SmsSerializer(serializers.Serializer):
     """
