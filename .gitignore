@@ -3,3 +3,4 @@
 .*/migrations/*
 .userapi/migrations/*
 .userapi/SMSVerify/sms_config.py
+.vscode/*

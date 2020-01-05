@@ -1,7 +1,8 @@
 from django.shortcuts import render
-from .serializers import UserSerializers, UserSignInSerializers, SmsSerializer, UserDetailSerializer
+from .serializers import UserSerializers, UserSignInSerializers, SmsSerializer, UserLoginSerializer
 from .models import User, VerifyCode, UserSignInfoRecord, UserLoginRecord
 from rest_framework import generics, viewsets
+from rest_framework.views import APIView
 from rest_framework import mixins
 from rest_framework.pagination import PageNumberPagination
 from django.db.models import Q
@@ -15,6 +16,8 @@ from rest_framework.permissions import IsAuthenticated, BasePermission, IsAuthen
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication, BaseAuthentication
 from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
 from rest_framework import exceptions
+from rest_framework_jwt.settings import api_settings
+from datetime import datetime
 
 
 class UserAuthentication(ModelBackend):
@@ -47,14 +50,13 @@ class UserAuthentication(ModelBackend):
 def jwt_response_payload_handler(token, user=None, request=None):
     return {
         'token': token,
-        'code': 20000,
+        'code': 200,
         'data': {
             'username': user.alias if user.alias else "awesome one",
             'avatar': "/user/babalababa.jpg" # user.user_header_picture()
         },
 
     }
-
 
 
 class MyPermisssion(BasePermission):
@@ -74,7 +76,8 @@ class UserSerilizersPagination(PageNumberPagination):
     authentication_classes = (UserAuthentication, )
 
 
-class UserSerializersView(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+#  业务serializer部分
+class UserSerializersViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     获取用户的详细信息用的，记得加验证
     """
@@ -130,7 +133,7 @@ class SmsCodeViewset(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
-    用户
+    用户注册使用的视图
     """
     serializer_class = UserSignInSerializers
     queryset = User.objects.all()
@@ -138,11 +141,11 @@ class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         if self.action == "retrieve":
-            return UserDetailSerializer
+            return UserSerializers
         elif self.action == "create":
             return UserSignInSerializers
 
-        return UserDetailSerializer
+        return UserLoginSerializer
 
     def get_permissions(self):
         if self.action == "retrieve":
@@ -173,6 +176,68 @@ class UserSignInViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
     def perform_create(self, serializer):
         return serializer.save()
+
+
+class LoginViewSet(APIView):
+    """
+    用户的登录登出
+    """
+    queryset = User.objects.all()
+    serializer_class = UserLoginSerializer
+
+    def get_serializer_context(self):
+        """
+        Extra context provided to the serializer class.
+        """
+        return {
+            'request': self.request,
+            'view': self,
+        }
+
+    def get_serializer_class(self):
+        """
+        Return the class to use for the serializer.
+        Defaults to using `self.serializer_class`.
+
+        """
+        assert self.serializer_class is not None, (
+                "'%s' should either include a `serializer_class` attribute, "
+                "or override the `get_serializer_class()` method."
+                % self.__class__.__name__)
+        return self.serializer_class
+
+    def get_serializer(self, *args, **kwargs):
+        """
+        Return the serializer instance that should be used for validating and
+        deserializing input, and for serializing output.
+        """
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.object.get('user') or request.user
+            token = serializer.object.get('token')
+            response_data = jwt_response_payload_handler(token, user, request)  # todo: 用户登录后信息的获取：用户头像链接！！
+            response = Response(response_data)
+            if api_settings.JWT_AUTH_COOKIE:
+                expiration = (datetime.utcnow() +
+                              api_settings.JWT_EXPIRATION_DELTA)
+                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
+                                    token,
+                                    expires=expiration,
+                                    httponly=True)
+            return response
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # print(request)
+        # print(args)
+        # return None
+
 
 
 

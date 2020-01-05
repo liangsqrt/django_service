@@ -9,10 +9,15 @@ from .models import *
 from rest_framework import serializers
 from company_website.settings import REGEX_MOBILE
 import re
+from django.contrib.auth import authenticate
 from rest_framework.validators import UniqueValidator
+from rest_framework_jwt.serializers import jwt_encode_handler, jwt_payload_handler
 
 
 class UserSerializers(serializers.ModelSerializer):
+    """
+    用户登录后的，个人主页的详细信息
+    """
     password = serializers.CharField(write_only=True)
     is_activate = serializers.CharField(write_only=True)
     is_deletes = serializers.CharField(write_only=True)
@@ -22,7 +27,7 @@ class UserSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("__all__")
+        fields = "__all__"
 
 
 class SmsSerializer(serializers.Serializer):
@@ -105,10 +110,42 @@ class UserSignInSerializers(serializers.ModelSerializer):
         fields = ("username", "code", "mobile_phone", "password")  # serializer和user字段的合集
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.ModelSerializer):
     """
     用户详情序列化类， 用户已经注册过后，登录后所需的字段
     """
+    verify_code = serializers.CharField(required=True)
+
+    def validate(self, attrs):
+        credentials = {
+            'username': attrs.get('username'),
+            'password': attrs.get('password')
+        }
+
+        if all(credentials.values()):
+            user = authenticate(**credentials)
+
+            if user:
+                if not user.is_active:
+                    msg = _('User account is disabled.')
+                    raise serializers.ValidationError(msg)
+
+                payload = jwt_payload_handler(user)
+
+                return {
+                    'token': jwt_encode_handler(payload),
+                    'user': user
+                }
+            else:
+                msg = _('Unable to log in with provided credentials.')
+                raise serializers.ValidationError(msg)
+        else:
+            msg = _('Must include "{username_field}" and "password".')
+            msg = msg.format(username_field='username')
+            raise serializers.ValidationError(msg)
+
     class Meta:
         model = User
-        fields = ("username", "gender", "birthday", "email", "mobile_phone")
+        fields = ("username", "password", "verify_code", )
+
+

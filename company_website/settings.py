@@ -119,7 +119,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False  # utc时间转换太恼火！！
+USE_TZ = True  # utc时间转换太恼火！！
 
 
 # Static files (CSS, JavaScript, Images)

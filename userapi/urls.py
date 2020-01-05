@@ -11,6 +11,6 @@ from userapi.views import *
 
 
 urlpatterns = [
-    path('login', UserSerializersView.as_view())
+    path('login', UserSerializersViewSet.as_view())
 
 ]

@@ -23,15 +23,17 @@ from rest_framework_jwt.views import obtain_jwt_token, verify_jwt_token, refresh
 
 router = DefaultRouter()
 
-router.register('user', UserSerializersView,)
+router.register('user', UserSerializersViewSet, )
 router.register("sign_in", UserSignInViewSet)
 router.register("codes", SmsCodeViewset)
+# router.register('login', LoginViewSet)
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
     re_path('^api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path("api/user/login", obtain_jwt_token),
+    path("api/login", LoginViewSet.as_view()),
+    # path("api/login", obtain_jwt_token),
     path('jwt_verify/', verify_jwt_token),
     path('jwt_/refresh', refresh_jwt_token),
 ]
