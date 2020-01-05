@@ -110,11 +110,15 @@ class UserSignInSerializers(serializers.ModelSerializer):
         fields = ("username", "code", "mobile_phone", "password")  # serializer和user字段的合集
 
 
-class UserLoginSerializer(serializers.ModelSerializer):
+class UserLoginSerializer(serializers.Serializer):
     """
     用户详情序列化类， 用户已经注册过后，登录后所需的字段
     """
-    verify_code = serializers.CharField(required=True)
+    verify_code = serializers.CharField(required=True, help_text="验证码")
+    username = serializers.CharField(required=True, help_text="用户名")
+    password = serializers.CharField(
+        style={'input_type': 'password'}, help_text="密码", label="密码", write_only=True,
+    )
 
     def validate(self, attrs):
         credentials = {
