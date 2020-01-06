@@ -129,6 +129,7 @@ class UserLoginSerializer(serializers.Serializer):
         if all(credentials.values()):
             user = authenticate(**credentials)
 
+            # todo: 需要加强，如验证码
             if user:
                 if not user.is_active:
                     msg = _('User account is disabled.')
