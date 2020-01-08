@@ -154,3 +154,11 @@ class UserLoginSerializer(serializers.Serializer):
         fields = ("username", "password", "verify_code", )
 
 
+class UserLogoutSeriazlizer(serializers.ModelSerializer):
+    jwt_token = serializers.CharField(required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', )
+
+
