@@ -6,4 +6,4 @@ zhiyuan/migrations/*
 userapi/SMSVerify/sms_config.py
 .vscode/*
 *.db
-*.pyc
+*.cpython-36.pyc
