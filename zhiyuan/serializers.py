@@ -29,7 +29,5 @@ class SchoolFilterSerializer(serializers.Serializer):
     is_211 = serializers.BooleanField()
     tags = serializers.ListSerializer()
 
-    def validate_provinces(self, value):
-        provinces = SchoolOverViewItem.object.get().all()
 
 
