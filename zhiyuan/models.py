@@ -5,7 +5,7 @@ from django.db import models
 class SchoolOverViewItem(models.Model):
     public_private = (
         ('pub', "公立"),
-        ('private', "私立")，
+        ('private', "私立"),
         ('private_pub', '公私结合'),
         ('others', '其它')
             )
@@ -23,13 +23,13 @@ class SchoolOverViewItem(models.Model):
     is_985 = models.BooleanField(default=0)
     school_types = models.CharField(max_length=255, default="")
     tags = models.CharField(max_length=255, help_text="标签列表的json字符串: 985,211")
-    pub_pri = models.CharField(choices=public_private)
-    bk_zk = models.CharField(choices=benke_zhuanke)
+    pub_pri = models.CharField(max_length=50, choices=public_private)
+    bk_zk = models.CharField(max_length=50, choices=benke_zhuanke)
     description = models.TextField()
 
     class Meta:
-        verbose_name = _("SchoolOverViewItem")
-        verbose_name_plural = _("SchoolOverViewItems")
+        verbose_name = ("SchoolOverViewItem")
+        verbose_name_plural = ("SchoolOverViewItems")
         unique_together = ('name', 'province', 'is_985', 'is_211', 'school_types')
 
     def __str__(self):

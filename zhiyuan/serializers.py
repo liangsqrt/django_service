@@ -27,7 +27,7 @@ class SchoolFilterSerializer(serializers.Serializer):
     provinces = serializers.ListField()
     is_985 = serializers.BooleanField()
     is_211 = serializers.BooleanField()
-    tags = serializers.ListSerializer()
+    tags = serializers.ListField()
 
 
 

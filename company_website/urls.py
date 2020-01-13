@@ -35,7 +35,7 @@ urlpatterns = [
     re_path('^api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path("api/login", LoginViewSet.as_view()),
-    path('api/zhiyuan', SchooleFilter.as_view())
+    path('api/zhiyuan', SchooleFilter.as_view()),
     # path("api/login", obtain_jwt_token),
     path('jwt_verify/', verify_jwt_token),
     path('jwt_/refresh', refresh_jwt_token),
