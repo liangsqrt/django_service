@@ -3,17 +3,17 @@ from django.db import models
 # Create your models here.
 
 class SchoolOverViewItem(models.Model):
-    public_private = (
-        ('pub', "公立"),
-        ('private', "私立"),
-        ('private_pub', '公私结合'),
-        ('others', '其它')
-            )
-    benke_zhuanke = (
-        ("bk", "本科"),
-        ("zk", "专科"),
-        ("others", "其它")
-    )
+    # public_private = (
+    #     ('pub', "公立"),
+    #     ('private', "私立"),
+    #     ('private_pub', '公私结合'),
+    #     ('others', '其它')
+    #         )
+    # benke_zhuanke = (
+    #     ("bk", "本科"),
+    #     ("zk", "专科"),
+    #     ("others", "其它")
+    # )
     logo = models.URLField(max_length=255, unique=True)
     name = models.CharField(primary_key=True, max_length=255, unique=True)
     address = models.CharField(max_length=255, help_text="所在地址", null=False)
@@ -23,9 +23,19 @@ class SchoolOverViewItem(models.Model):
     is_985 = models.BooleanField(default=0)
     school_types = models.CharField(max_length=255, default="")
     tags = models.CharField(max_length=255, help_text="标签列表的json字符串: 985,211")
-    pub_pri = models.CharField(max_length=50, choices=public_private)
-    bk_zk = models.CharField(max_length=50, choices=benke_zhuanke)
+    # pub_pri = models.CharField(max_length=50, choices=public_private)
+    # is_bk = models.CharField(max_length=50, choices=benke_zhuanke)
+    is_bk = models.BooleanField(default=0)
+    website = models.URLField(max_length=255)
+    tel = models.CharField(max_length=255)
+    # is_zk = models.BooleanField(default=0)
     description = models.TextField()
+    is_crivilian = models.BooleanField(default=0)
+    sch_sc = models.CharField(max_length=255)
+    sch_belong = models.CharField(max_length=255)
+    sample_count = models.IntegerField(default=0)
+    female_count = models.IntegerField(default=0)
+    male_count = models.IntegerField(default=0)
 
     class Meta:
         verbose_name = ("SchoolOverViewItem")

@@ -7,3 +7,4 @@ userapi/SMSVerify/sms_config.py
 .vscode/*
 *.db
 *.pyc
+

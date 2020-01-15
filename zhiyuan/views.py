@@ -13,4 +13,5 @@ class SchooleFilter(APIView):
         print(request)
 
     def get(self, request, *args, **kwargs):
+        self.queryset
         print(request)

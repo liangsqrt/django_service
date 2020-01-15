@@ -29,5 +29,3 @@ class SchoolFilterSerializer(serializers.Serializer):
     is_211 = serializers.BooleanField()
     tags = serializers.ListField()
 
-
-
